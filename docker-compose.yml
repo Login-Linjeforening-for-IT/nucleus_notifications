@@ -1,5 +1,5 @@
 services:
-  nucleus-notifications:
+  nucleus_notifications:
     build:
       context: .
       dockerfile: Dockerfile
