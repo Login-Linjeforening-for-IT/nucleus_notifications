@@ -2,6 +2,7 @@ services:
   nucleus_notifications:
     container_name: nucleus_notifications
     image: nucleus_notifications
+    restart: always
     build:
       context: .
       dockerfile: Dockerfile
