@@ -62,26 +62,32 @@ export default async function slowMonitored() {
         // Body of the notification
         let norwegianBody = ""
         let englishBody = ""
+        
+        // New location
+        const location = {
+            no: APIevent.location?.name_no || JSON.stringify(APIevent.location),
+            en: APIevent.location?.name_en || JSON.stringify(APIevent.location)
+        }
 
         // Sends the relevant notification to the relevant topics with the relevant information
         if (time && link && newLocation) {
-            norwegianBody = `Arrangementet har blitt endret. Ny tid: ${hour} den ${formattedStarttime}. Nytt sted: ${APIevent.location}. Trykk her for alle detaljene.`
-            englishBody = `Event has changed. New time: ${hour} on ${formattedStarttime}. New location: ${APIevent.location}. Tap here for details.`
+            norwegianBody = `Arrangementet har blitt endret. Ny tid: ${hour} den ${formattedStarttime}. Nytt sted: ${location.no}. Trykk her for alle detaljene.`
+            englishBody = `Event has changed. New time: ${hour} on ${formattedStarttime}. New location: ${location.en}. Tap here for details.`
         } else if (time && link) {
             norwegianBody = `Tid endret til kl: ${hour} den ${formattedStarttime}. Påmeldingslinken er også endret. Trykk her for flere detaljer.`
             englishBody = `Time changed to: ${hour} on ${formattedStarttime}. Registration link has also changed. Tap here for details.`
         } else if (time && newLocation) {
-            norwegianBody = `Tid og sted endret. Ny tid: ${hour} den ${formattedStarttime}. Nytt sted: ${APIevent.location}. Trykk her for å se den oppdaterte informasjonen.`
-            englishBody = `Time and location changed. New time: ${hour} on ${formattedStarttime}. New location: ${APIevent.location}. Tap here for details.`
+            norwegianBody = `Tid og sted endret. Ny tid: ${hour} den ${formattedStarttime}. Nytt sted: ${location.no}. Trykk her for å se den oppdaterte informasjonen.`
+            englishBody = `Time and location changed. New time: ${hour} on ${formattedStarttime}. New location: ${location.en}. Tap here for details.`
         } else if (link && newLocation) {
-            norwegianBody = `Nytt sted: ${APIevent.location}. Påmeldingslink har også blitt endret. Trykk her for mer informasjon.`
-            englishBody = `New location: ${APIevent.location}. Registration link has also changed. Click here for more information.`
+            norwegianBody = `Nytt sted: ${location.no}. Påmeldingslink har også blitt endret. Trykk her for mer informasjon.`
+            englishBody = `New location: ${location.en}. Registration link has also changed. Click here for more information.`
         } else if (time) {
             norwegianBody = `Tidspunkt endret til kl ${hour} den ${formattedStarttime}.`
             englishBody = `Time changed to ${hour} on ${formattedStarttime}.`
         } else if (newLocation) {
-            norwegianBody = `Sted endret til ${APIevent.location}.`
-            englishBody = `Location changed to ${APIevent.location}.`
+            norwegianBody = `Sted endret til ${location.no}.`
+            englishBody = `Location changed to ${location.en}.`
         } else if (link) {
             norwegianBody = "Ny påmeldingslink lagt ut!"
             englishBody = "New registration link available!"

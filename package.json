@@ -1,6 +1,6 @@
 {
     "name": "nucleus_notifications",
-    "version": "3.0.2",
+    "version": "3.0.3",
     "description": "Automated notifications for the Login app",
     "main": "index.ts",
     "author": "Login - Linjeforeningen for IT",
@@ -19,7 +19,7 @@
     },
     "devDependencies": {
         "@types/node": "^25.6.0",
-        "typescript": "^5.9.3"
+        "typescript": "^6.0.3"
     },
     "imports": {
         "#utils/*": "./src/utils/*",
