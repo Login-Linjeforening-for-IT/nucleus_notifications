@@ -10,11 +10,15 @@ import slowMonitored from "./slowMonitored.ts"
 import { schedule } from "node-cron"
 import test from "./test.ts"
 
-// Internal test of the application before allowing it to send notifications to end users
-test()
+await bootstrap()
 
-// Schedules nucleusNotifications to run every minute
-schedule("* * * * *", nucleusNotifications)
+async function bootstrap() {
+    // Internal test of the application before allowing it to send notifications to end users.
+    await test()
 
-// Schedules slowMonitored to run every 30 minutes
-schedule("*/30 * * * *", slowMonitored)
+    // Schedules nucleusNotifications to run every minute.
+    schedule("* * * * *", nucleusNotifications)
+
+    // Schedules slowMonitored to run every 30 minutes.
+    schedule("*/30 * * * *", slowMonitored)
+}

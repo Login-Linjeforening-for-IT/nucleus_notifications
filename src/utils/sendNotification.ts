@@ -22,6 +22,12 @@ export default async function sendNotification({ title, body, screen, topic }: s
         }
 
         const data = handleNestedObjects(screen) || {}
+
+        if (config.dry_run) {
+            console.log(`Dry run: skipped notification "${title}" with body "${body}" to topic "${topic}" at ${new Date().toISOString()}.`)
+            return
+        }
+
         const response = await fetch(`${config.app_api}/notifications`, {
             method: "POST",
             headers: {

@@ -1,6 +1,7 @@
 import { fetchAdDetails, fetchAds } from "./fetch.ts"
 import { readFile, writeFile } from "./file.ts"
 import sendNotification from "./sendNotification.ts"
+import { pathToFileURL } from "node:url"
 
 type hasAdProps = {
     ads: DetailedAd[]
@@ -72,7 +73,9 @@ export default async function handleAds() {
     console.log(`Wrote ${newA24H.length + newA2H.length + newA6H.length} ads to files.`)
 }
 
-handleAds()
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+    await handleAds()
+}
 
 function hasAd({ ads, ad }: hasAdProps) {
     const ids: number[] = []

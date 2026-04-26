@@ -1,5 +1,6 @@
 import handleError, { fixJSONContent } from "./error.ts"
 import fs, { promises } from 'fs'
+import path from "node:path"
 
 type writeFileProps = {
     fileName: string
@@ -29,21 +30,26 @@ type createPathProps = {
  * @returns {string} Full file path
  */
 export default function file(file: string): string {
+    const dataRoot = process.env.NUCLEUS_NOTIFICATIONS_DATA_DIR
+    const resolveDataFile = (relativePath: string) => dataRoot
+        ? path.join(dataRoot, relativePath.replace(/^data\//, ""))
+        : relativePath
+
     switch (file) {
-        case "10m":         return 'data/intervals/events/10m.json'
-        case "30m":         return 'data/intervals/events/30m.json'
-        case "1h":          return 'data/intervals/events/1h.json'
-        case "2h":          return 'data/intervals/events/2h.json'
-        case "3h":          return 'data/intervals/events/3h.json'
-        case "6h":          return 'data/intervals/events/6h.json'
-        case "1d":          return 'data/intervals/events/1d.json'
-        case "2d":          return 'data/intervals/events/2d.json'
-        case "1w":          return 'data/intervals/events/1w.json'
-        case "a2h":         return 'data/intervals/ads/2h.json'
-        case "a6h":         return 'data/intervals/ads/6h.json'
-        case "a24h":        return 'data/intervals/ads/24h.json'
-        case "notified":    return 'data/notifiedEvents.json'
-        case "slow":        return 'data/slowMonitored.json'
+        case "10m":         return resolveDataFile('data/intervals/events/10m.json')
+        case "30m":         return resolveDataFile('data/intervals/events/30m.json')
+        case "1h":          return resolveDataFile('data/intervals/events/1h.json')
+        case "2h":          return resolveDataFile('data/intervals/events/2h.json')
+        case "3h":          return resolveDataFile('data/intervals/events/3h.json')
+        case "6h":          return resolveDataFile('data/intervals/events/6h.json')
+        case "1d":          return resolveDataFile('data/intervals/events/1d.json')
+        case "2d":          return resolveDataFile('data/intervals/events/2d.json')
+        case "1w":          return resolveDataFile('data/intervals/events/1w.json')
+        case "a2h":         return resolveDataFile('data/intervals/ads/2h.json')
+        case "a6h":         return resolveDataFile('data/intervals/ads/6h.json')
+        case "a24h":        return resolveDataFile('data/intervals/ads/24h.json')
+        case "notified":    return resolveDataFile('data/notifiedEvents.json')
+        case "slow":        return resolveDataFile('data/slowMonitored.json')
 
         default: {
             handleError({file: "file", error: `Invalid file argument in file.ts: ${file}`})
@@ -140,9 +146,12 @@ export async function readFile(arg: string, stop?: boolean): Promise<unknown> {
     })
 }
 
-export async function createPath({ path }: createPathProps) {
+export async function createPath({ path: requestedPath }: createPathProps) {
     const cwd = process.cwd()
-    const fullPath = `${cwd}${path}`
+    const normalizedPath = requestedPath.startsWith("/")
+        ? requestedPath.slice(1)
+        : requestedPath
+    const fullPath = path.join(cwd, normalizedPath)
     const entries = fullPath.split('/')
     let currentPath = ''
 

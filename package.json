@@ -9,7 +9,7 @@
     "scripts": {
         "dev": "bun src/index.ts",
         "slow": "bun src/slowMonitored.ts",
-        "test": "bun src/test.ts",
+        "test": "NUCLEUS_NOTIFICATIONS_DRY_RUN=1 NUCLEUS_NOTIFICATIONS_DATA_DIR=data/test NUCLEUS_NOTIFICATIONS_TEST_RUNS=1 NUCLEUS_NOTIFICATIONS_TEST_INTERVAL_MS=0 bun src/test.ts",
         "notify": "bun src/utils/sendNotification.ts",
         "start": "bun src/index.ts"
     },

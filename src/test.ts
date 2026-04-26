@@ -1,6 +1,7 @@
 import nucleusNotifications from "./nucleusNotifications.ts"
 import slowMonitored from "./slowMonitored.ts"
 import { createPath } from "./utils/file.ts"
+import { pathToFileURL } from "node:url"
 
 /**
  * Test function for the repository. Will run for 5 minutes then put the
@@ -13,6 +14,8 @@ import { createPath } from "./utils/file.ts"
 export default async function test() {
     // Defines test count
     let testCount = 0
+    const testRuns = readNumberEnv("NUCLEUS_NOTIFICATIONS_TEST_RUNS", 5)
+    const intervalMs = readNumberEnv("NUCLEUS_NOTIFICATIONS_TEST_INTERVAL_MS", 60000)
 
     // Writes start time to file
     const time = new Date()
@@ -30,17 +33,19 @@ export default async function test() {
     // Runs the two entry points of the application 5 times to ensure stability
     do {
         // Runs main application entry points
-        nucleusNotifications()
-        slowMonitored()
+        await nucleusNotifications()
+        await slowMonitored()
 
         // Increases count
         testCount++
 
-        // Times out for 1 minute between each run to ensure stability
-        await new Promise(resolve => setTimeout(resolve, 60000))
+        // Times out between runs to ensure stability.
+        if (testCount < testRuns && intervalMs > 0) {
+            await new Promise(resolve => setTimeout(resolve, intervalMs))
+        }
 
         // Runs 5 times before continuing
-    } while (testCount < 5)
+    } while (testCount < testRuns)
 
     // Sets stable as true as it has run both functions 5 times without issues.
     globalThis.stable = true
@@ -51,4 +56,16 @@ export default async function test() {
     console.log("No errors found. Putting repository into production.")
 }
 
-test()
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+    await test()
+}
+
+function readNumberEnv(name: string, fallback: number) {
+    const value = Number(process.env[name])
+
+    if (!Number.isFinite(value) || value < 0) {
+        return fallback
+    }
+
+    return value
+}
