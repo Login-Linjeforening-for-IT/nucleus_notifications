@@ -54,7 +54,7 @@ export default async function slowMonitored() {
         const name_en = `${APIevent.name_en || APIevent.name_no} ${formattedStarttime}`
 
         // Location of the event
-        const newLocation = slow && slow.location !== APIevent.location ? true : false
+        const newLocation = slow && normalizeLocation(slow.location) !== normalizeLocation(APIevent.location)
 
         // Formats hour of the event
         const hour = `${APIevent.time_start[11]}${APIevent.time_start[12]}:${APIevent.time_start[14]}${APIevent.time_start[15]}`
@@ -125,4 +125,12 @@ export default async function slowMonitored() {
         // Otherwise logs that there are no events in api.
         console.log("Found nothing new.")
     }
+}
+
+function normalizeLocation(location: unknown) {
+    if (!location || typeof location !== "object") {
+        return String(location ?? "")
+    }
+
+    return JSON.stringify(location, Object.keys(location as Record<string, unknown>).sort())
 }
